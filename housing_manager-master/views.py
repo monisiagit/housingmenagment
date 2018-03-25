@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from main import app
-from main import db
-from main import bcrypt
-from main import lm
-from models import User
+from main import app, db, lm
+from src.entity import User
 from forms import RegistrationForm
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_user , logout_user , current_user , login_required

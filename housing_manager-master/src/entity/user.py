@@ -1,22 +1,10 @@
-__author__ = 'Piotr Dyba'
-
-
-
-from sqlalchemy import Column
-from sqlalchemy.types import Integer
-from sqlalchemy.types import String
-from sqlalchemy.types import Boolean
-
-from main import db
-
+from sqlalchemy import Column, Integer, String, Boolean
 from flask_login import UserMixin
+from flask_bcrypt import Bcrypt
 
-from main import lm
+from main import db, lm
 
-
-
-
-
+bcrypt = Bcrypt()
 
 
 class User(db.Model, UserMixin):
@@ -42,6 +30,7 @@ class User(db.Model, UserMixin):
         Returns if user is admin.
         """
         return self.admin
+
 
 @lm.user_loader
 def load_user(id):
