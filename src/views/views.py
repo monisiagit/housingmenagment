@@ -1,41 +1,48 @@
 #!/usr/bin/env python
 # encoding: utf-8
+from flask import render_template, request, flash, redirect, url_for
+from flask_login import login_user, logout_user, current_user
 from flask_bcrypt import Bcrypt
-
 from forms import RegistrationForm
 from main import app, db
 from src.model import User
 
 bcrypt = Bcrypt()
 
-from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_user , logout_user , current_user
 
 app.secret_key = 'random string'
+
+messages = {
+    'login.invalid': ('Incorrect password or username', 'danger'),
+    'login.correct': ('You have been succesfuly logged in', 'success'),
+    'login.new': ('Wellcome, you have been succesfully registered', 'success')
+}
+
 
 @app.route('/', methods=['GET', 'POST'])
 def info():
     return render_template('info.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+
+@app.route('/check_login', methods=['POST'])
+def check_login():
+    user = User.authenticate(request.form['Username'], request.form['Password'])
+    if user:
+        login_user(user)
+        flash(*messages['login.correct'])
+    else:
+        flash(*messages['login.invalid'])
+
+    return redirect('/login')
+
+
+@app.route('/login', methods=['GET'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('info'))
-    error = None
 
-    if request.method == 'POST':
-        gosc = User.query.filter_by(username=request.form['Username']).first()
-        if gosc is None:
-            error = 'Złe hasło lub nazwa użytkwanika! Spróbuj jeszcze raz'
-        else:
-            if bcrypt.check_password_hash(gosc.password, request.form['Password']):
-                flash('Logowanie zakończone sukcesem')
-                login_user(gosc)
-                return redirect(url_for('info'))
-            else:
-                error= 'Złe hasło lub nazwa użytkwanika! Spróbuj jeszcze raz'
+    return render_template('logowanie.html')
 
-    return render_template('logowanie.html', error=error)
 
 @app.route('/logout')
 def logout():
@@ -50,9 +57,9 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
-        user.password=bcrypt.generate_password_hash(form.password.data)
+        user.password = bcrypt.generate_password_hash(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash(*messages['login.new'])
         return redirect(url_for('login'))
     return render_template('rejestracja.html', title='Register', form=form)
