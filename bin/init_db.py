@@ -1,15 +1,16 @@
 __author__ = 'Piotr Dyba'
 
-from sqlalchemy import create_engine
-from main import db
-from src.entity import User
-
 from flask_bcrypt import Bcrypt
+from sqlalchemy import create_engine
+
+from src.model import User
+from ..main import db
+
 bcrypt = Bcrypt()
 
 
 def db_start():
-    create_engine('sqlite:///tmp/test.db', convert_unicode=True)
+    create_engine('sqlite:///../var/tmp/test.db', convert_unicode=True)
     db.create_all()
     db.session.commit()
     user = User()

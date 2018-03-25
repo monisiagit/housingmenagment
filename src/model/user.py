@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from flask_login import UserMixin
 from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, Boolean
 
 from main import db, lm
 

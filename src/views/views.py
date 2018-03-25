@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from main import app, db, lm
-from src.entity import User
-from forms import RegistrationForm
 from flask_bcrypt import Bcrypt
+
+from forms import RegistrationForm
+from main import app, db
+from src.model import User
 
 bcrypt = Bcrypt()
 
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_user , logout_user , current_user , login_required
+from flask_login import login_user , logout_user , current_user
+
 app.secret_key = 'random string'
 
 @app.route('/', methods=['GET', 'POST'])
